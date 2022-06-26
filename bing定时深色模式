@@ -1,0 +1,48 @@
+// ==UserScript==
+// @name         bing定时深色模式
+// @namespace    http://tampermonkey.net/
+// @version      2.0
+// @description  下午8点到早上6点开启深色模式
+// @author       LBX
+// @match        https://bing.com/*
+// @match        http://bing.com/*
+// @match        http://*.bing.com/*
+// @match        https://*.bing.com/*
+// @icon         https://tse2-mm.cn.bing.net/th/id/OIP-C.B-jgYDahkQatvFurrysfBAHaEo?pid=ImgDet&rs=1
+// @grant        none
+// ==/UserScript==
+
+(function () {
+  'use strict';
+
+  function main() {
+    const hour = new Date().getHours()
+    let timer = null
+    if ((+hour > 20 && +hour < 24) || (+hour < 6 && +hour >= 0)) {
+      document.querySelector('html').style.filter = 'invert(100%)'
+      setTimeout(() => {
+        revertFilter()
+      }, 500)
+      document.addEventListener('scroll', () => {
+        timer && clearTimeout(timer)
+        timer = setTimeout(() => {
+          revertFilter()
+        }, 500)
+      })
+    }
+  }
+
+  function revertFilter() {
+    console.log('revert')
+    let imgs = document.querySelectorAll('img')
+    for (let i = 0; i < imgs.length; i++) {
+      let img = imgs[i]
+      img.style.filter = 'invert(1)'
+    }
+    if (document.querySelector('.bing-player-area')) {
+      document.querySelector('.bing-player-area').style.filter = 'invert(1)'
+    }
+  }
+  main()
+  // Your code here...
+})()
